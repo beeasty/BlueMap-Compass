@@ -1,5 +1,6 @@
 package fun.mntale.blueMapCompass;
 
+import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -21,15 +22,12 @@ import org.bukkit.DyeColor;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 
-import com.tcoded.folialib.wrapper.task.WrappedTask;
-
 import java.util.Arrays;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
-import org.bukkit.scheduler.BukkitTask;
 
 public class WaypointManager {
     private static final Map<UUID, Map<String, BlockDisplay>> waypoints = new ConcurrentHashMap<>();
@@ -79,11 +77,11 @@ public class WaypointManager {
     );
 
     // Global task for updating all waypoints
-    private static WrappedTask globalTask;
+    private static BukkitTask globalTask;
 
     public static void startGlobalWaypointTask(JavaPlugin plugin) {
         stopGlobalWaypointTask();
-        globalTask = BlueMapCompass.foliaLib.getImpl().runTimer(() -> updateAllWaypoints(plugin), 1L, 2L);
+        globalTask = Bukkit.getScheduler().runTaskTimer(plugin, () -> updateAllWaypoints(plugin), 1L, 2L);
     }
 
     public static void stopGlobalWaypointTask() {
@@ -137,8 +135,8 @@ public class WaypointManager {
                 if (!player.isOnline() || player.getWorld() == null) {
                     return;
                 }
-                // Spawn new BlockDisplay and TextDisplay using FoliaLib scheduler at player entity
-                BlueMapCompass.foliaLib.getScheduler().runAtEntity(player, (spawnTask) -> {
+                // Spawn new BlockDisplay and TextDisplay changed to use Bukkit scheduler at player entity
+                Bukkit.getScheduler().runTask(BlueMapCompass.instance, () -> {
                     Material spawnedBlockMaterial = Material.GREEN_STAINED_GLASS;
                     if (marker.groupId().equalsIgnoreCase("banner-markers")) {
                         String colorName = marker.color() != null ? marker.color().toUpperCase() : "GREEN";
@@ -231,7 +229,7 @@ public class WaypointManager {
         if (playerDisplays != null) {
             BlockDisplay display = playerDisplays.remove(markerId);
         if (display != null && !display.isDead()) {
-            BlueMapCompass.foliaLib.getScheduler().runAtEntity(display, removeTask -> display.remove());
+            Bukkit.getScheduler().runTask(BlueMapCompass.instance, () -> display.remove());
                 if (fun.mntale.blueMapCompass.BlueMapCompass.debug) {
                     Bukkit.getLogger().warning("[BlueMapCompass] BlockDisplay removed for player: " + player.getName());
                 }
@@ -242,7 +240,7 @@ public class WaypointManager {
         if (playerTextDisplays != null) {
             TextDisplay textDisplay = playerTextDisplays.remove(markerId);
             if (textDisplay != null && !textDisplay.isDead()) {
-                BlueMapCompass.foliaLib.getScheduler().runAtEntity(textDisplay, removeTask -> textDisplay.remove());
+                Bukkit.getScheduler().runTask(BlueMapCompass.instance, () -> textDisplay.remove());
                 if (fun.mntale.blueMapCompass.BlueMapCompass.debug) {
                     Bukkit.getLogger().warning("[BlueMapCompass] TextDisplay removed for player: " + player.getName());
                 }
@@ -291,12 +289,12 @@ public class WaypointManager {
         if (distance > 48) {
             Location newLoc = getBillboardLocation(player, target, 48);
             newLoc.setY(player.getEyeLocation().getY() + getDeterministicYOffset(markerIdFinal));
-            BlueMapCompass.foliaLib.getScheduler().runAtEntity(display, tpTask -> {
+            Bukkit.getScheduler().runTask(BlueMapCompass.instance, () -> {
                 display.setTeleportDuration(durationTicks);
                 display.setInterpolationDuration(durationTicks);
                 display.teleportAsync(newLoc);
             });
-            BlueMapCompass.foliaLib.getScheduler().runAtEntity(textDisplay, td -> {
+            Bukkit.getScheduler().runTask(BlueMapCompass.instance, () -> {
                 textDisplay.setTeleportDuration(durationTicks);
                 textDisplay.setInterpolationDuration(durationTicks);
                 textDisplay.teleportAsync(newLoc);
@@ -316,14 +314,14 @@ public class WaypointManager {
                 textDisplay.text(newText);
             });
         } else {
-            BlueMapCompass.foliaLib.getScheduler().runAtEntity(display, tpTask -> {
+            Bukkit.getScheduler().runTask(BlueMapCompass.instance, () -> {
                 display.setTeleportDuration(durationTicks);
                 display.setInterpolationDuration(durationTicks);
                 display.teleportAsync(target);
             });
             Location textTarget = target.clone();
             textTarget.setY(player.getEyeLocation().getY() + getDeterministicYOffset(markerIdFinal));
-            BlueMapCompass.foliaLib.getScheduler().runAtEntity(textDisplay, td -> {
+            Bukkit.getScheduler().runTask(BlueMapCompass.instance, () -> {
                 textDisplay.setTeleportDuration(durationTicks);
                 textDisplay.setInterpolationDuration(durationTicks);
                 textDisplay.teleportAsync(textTarget);
@@ -357,13 +355,13 @@ public class WaypointManager {
             for (Entity entity : world.getEntitiesByClass(BlockDisplay.class)) {
                 String playerId = entity.getPersistentDataContainer().get(DISPLAY_PLAYER_KEY, PersistentDataType.STRING);
                 if (playerId != null && playerId.equals(uuid.toString())) {
-                    BlueMapCompass.foliaLib.getScheduler().runAtEntity(entity, t -> entity.remove());
+                    Bukkit.getScheduler().runTask(BlueMapCompass.instance, () -> entity.remove());
                 }
             }
             for (Entity entity : world.getEntitiesByClass(TextDisplay.class)) {
                 String playerId = entity.getPersistentDataContainer().get(DISPLAY_PLAYER_KEY, PersistentDataType.STRING);
                 if (playerId != null && playerId.equals(uuid.toString())) {
-                    BlueMapCompass.foliaLib.getScheduler().runAtEntity(entity, t -> entity.remove());
+                    Bukkit.getScheduler().runTask(BlueMapCompass.instance, () -> entity.remove());
                 }
             }
         }

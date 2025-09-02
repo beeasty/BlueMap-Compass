@@ -150,7 +150,7 @@ public class BlueMapIntegration {
                 return false;
             }
             Location location = new Location(world, marker.x(), marker.y(), marker.z());
-            fun.mntale.blueMapCompass.BlueMapCompass.foliaLib.getScheduler().teleportAsync(player, location, PlayerTeleportEvent.TeleportCause.PLUGIN);
+            player.teleportAsync(location, PlayerTeleportEvent.TeleportCause.PLUGIN);
             player.sendMessage("§aTeleported to " + marker.name() + "!");
             return true;
         } catch (Exception e) {
