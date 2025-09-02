@@ -1,10 +1,9 @@
 name: BlueMapCompass
-version: '1.0'
+version: '1.0-beasty-fork'
 main: fun.mntale.blueMapCompass.BlueMapCompass
 api-version: '1.21'
 authors: [ MidnightTale_ ]
 website: https://mntale.fun
-folia-supported: true
 dependencies:
   server:
     BlueMap:
