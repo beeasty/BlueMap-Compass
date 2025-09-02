@@ -1,3 +1,8 @@
+# READ ME
+This fork was made for my Local Paper Server (1.21.8). I'm not familiar with Java, Folia or Paper. <sup>or anything really</sup>  
+I only striped its folia content and replaced it with "standard" Bukkit.  
+This just works (at least in my localserver...), sooo feel free to improve it, because I have no idea what I'm doing :)
+
 # BlueMap Compass Plugin
 
 A Minecraft plugin that allows players to view and set waypoint to BlueMap markers through a custom GUI when right-clicking with a compass.
