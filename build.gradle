@@ -21,16 +21,11 @@ repositories {
         name = "bluecolored"
         url = "https://repo.bluecolored.de/releases"
     }
-    maven {
-        name = "tcoded-releases"
-        url = "https://repo.tcoded.com/releases"
-    }
 }
 
 dependencies {
-    compileOnly("io.papermc.paper:paper-api:1.21.6-R0.1-SNAPSHOT")
-    compileOnly("de.bluecolored:bluemap-api:2.7.4")
-    implementation("com.tcoded:FoliaLib:0.5.1")
+    compileOnly("io.papermc.paper:paper-api:1.21.8-R0.1-SNAPSHOT")
+    compileOnly("de.bluecolored:bluemap-api:2.7.5")
 }
 
 tasks {
@@ -70,7 +65,7 @@ processResources {
 }
 shadowJar {
     // !! MAKE SURE TO CHANGE THIS TO YOUR PLUGIN'S GROUP & PLUGIN NAME !!
-    relocate("com.tcoded.folialib", "fun.mntale.blueMapCompass.lib.folialib")
+    //relocate("com.tcoded.folialib", "fun.mntale.blueMapCompass.lib.folialib")
 
     // Optional: If you use minimize, make sure you exclude FoliaLib
     // Do not uncomment this if you don't know what you are doing
